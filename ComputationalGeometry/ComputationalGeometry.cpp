@@ -175,6 +175,14 @@ bool ComputationalGeometry::GetBarycentricCombination(const Point3D& X, const Po
 {
 	double ratio;
 
+	if (Y == Z)
+	{
+		coefficients[0] = 0.0;
+		coefficients[1] = 1.0;
+		coefficients[2] = -1.0;
+		return true;
+	}
+
 	if (!GetRatio(X, Y, Z, ratio))
 		return false;
 
