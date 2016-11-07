@@ -85,6 +85,17 @@ namespace ComputationalGeometry
 			double _z;
 	};
 
+	class CGAPI Segment2D
+	{
+		public:
+			Segment2D(const Point2D& X, const Point2D& Y);
+
+			const Array<double, 3>& GetCoef() const { return coefficients; }
+
+		private:
+			Array<double, 3> coefficients;
+	};
+
 	bool CGAPI Collinear(const Point2D& X, const Point2D& Y, const Point2D& Z);
 	bool CGAPI Collinear(const Point3D& X, const Point3D& Y, const Point3D& Z);
 
@@ -99,6 +110,12 @@ namespace ComputationalGeometry
 	// The barycentric combination coefficients are inserted in the array passed in coefficients parameter 
 	// only if there is an unique solution, a call to GetRation returns true and parameter ratio isn't equal to -1).
 	bool CGAPI GetBarycentricCombination(const Point3D& X, const Point3D& Y, const Point3D& Z, Array<double, 3>& coefficients);
+
+	// Pass the address of a Point2D pointer, the pointer should be initialized with nullptr) in intersectionPoint argument.
+	// If the function return false the two segments passed in arguments seg1 & seg2 do not intersect.
+	// If the function return true and the pointer still points to null the two segments are equal.
+	// If the function return true and the two segments aren't equal then a new Point2D will be alocated containing the intersection point.
+	bool CGAPI GetIntersectionPoint(const Segment2D& seg1, const Segment2D& seg2, Point2D** intersectionPoint);
 
 	/* Constants */
 	const Point2D Origin2D;

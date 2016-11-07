@@ -63,6 +63,13 @@ Point3D& Point3D::operator/=(double scalar)
 	return *this;
 }
 
+Segment2D::Segment2D(const Point2D& X, const Point2D& Y)
+{
+	coefficients[0] = X.GetY() - Y.GetY();
+	coefficients[1] = Y.GetX() - X.GetX();
+	coefficients[2] = X.GetX() * Y.GetY() - Y.GetX() * X.GetY();
+}
+
 bool ComputationalGeometry::Collinear(const Point2D& X, const Point2D& Y, const Point2D& Z)
 {
 	return ((Y.GetX() - X.GetX()) * (Z.GetY() - X.GetY()) - (Z.GetX() - X.GetX()) * (Y.GetY() - X.GetY())) == 0;
@@ -192,6 +199,24 @@ bool ComputationalGeometry::GetBarycentricCombination(const Point3D& X, const Po
 		coefficients[1] = 1.0 + ratio;
 		coefficients[2] = -ratio;
 	}
+
+	return true;
+}
+
+bool ComputationalGeometry::GetIntersectionPoint(const Segment2D& seg1, const Segment2D& seg2, Point2D** intersectionPoint)
+{
+	if (double delta = seg1.GetCoef()[0] * seg2.GetCoef()[1] - seg1.GetCoef()[1] * seg2.GetCoef()[0])
+	{
+		*intersectionPoint = new Point2D((-seg1.GetCoef()[2] * seg2.GetCoef()[1] + seg1.GetCoef()[1] * seg2.GetCoef()[2]) / delta, 
+			(-seg1.GetCoef()[0] * seg2.GetCoef()[2] + seg1.GetCoef()[2] * seg2.GetCoef()[0]) / delta);
+
+		return true;
+	}
+	
+	if (seg1.GetCoef()[0] * seg2.GetCoef()[1] - seg1.GetCoef()[1] * seg2.GetCoef()[0] == 0 &&
+			seg1.GetCoef()[0] * seg2.GetCoef()[2] - seg1.GetCoef()[2] * seg2.GetCoef()[0] == 0 &&
+			seg1.GetCoef()[1] * seg2.GetCoef()[2] - seg1.GetCoef()[2] * seg2.GetCoef()[1] == 0)
+			return true;
 
 	return true;
 }
