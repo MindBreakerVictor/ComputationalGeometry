@@ -117,6 +117,12 @@ namespace ComputationalGeometry
 	// If the function return true and the two segments aren't equal then a new Point2D will be alocated containing the intersection point.
 	bool CGAPI GetIntersectionPoint(const Segment2D& seg1, const Segment2D& seg2, Point2D** intersectionPoint);
 
+	// Check if the quadrilateral formed by the four points passed is convex.
+	bool CGAPI IsConvex(const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D);
+
+	// Check if the point M belongs to the convex coverage of points A, B, C, D.
+	bool CGAPI BelongsToConvexCoverage(const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D, const Point2D& M);
+
 	/* Constants */
 	const Point2D Origin2D;
 	const Point3D Origin3D;

@@ -1,5 +1,6 @@
 #include "PCH.h"
 #include "ComputationalGeometry.h"
+#include <cmath>
 
 using namespace ComputationalGeometry;
 
@@ -219,5 +220,32 @@ bool ComputationalGeometry::GetIntersectionPoint(const Segment2D& seg1, const Se
 			return true;
 
 	return true;
+}
+
+bool ComputationalGeometry::IsConvex(const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D)
+{
+	auto convexDeterminer = [](const Point2D& A, const Point2D& B, double x, double y)
+	{
+		return x * A.GetY() + A.GetX() * B.GetY() + B.GetX() * y - A.GetY() * B.GetX() - B.GetY() * x - y * A.GetX();
+	};
+
+	return convexDeterminer(A, B, C.GetX(), C.GetY()) * convexDeterminer(A, B, D.GetX(), D.GetY()) > 0.0 &&
+		convexDeterminer(B, C, A.GetX(), A.GetY()) * convexDeterminer(B, C, D.GetX(), D.GetY()) > 0.0 &&
+		convexDeterminer(C, D, A.GetX(), A.GetY()) * convexDeterminer(C, D, B.GetX(), B.GetY()) > 0.0 &&
+		convexDeterminer(D, A, C.GetX(), C.GetY()) * convexDeterminer(D, A, B.GetX(), B.GetY()) > 0.0;
+}
+
+bool ComputationalGeometry::BelongsToConvexCoverage(const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D, const Point2D& M)
+{
+	auto area = [](const Point2D& A, const Point2D& B, const Point2D& C)
+	{
+		return abs(A.GetX() * B.GetY() + C.GetX() * A.GetY() + B.GetX() * C.GetY() -
+			C.GetX() * B.GetY() - B.GetX() * A.GetY() - A.GetX() * C.GetY()) / 2.0;
+	};
+
+	return area(A, B, C) == area(M, A, B) + area(M, A, C) + area(M, B, C) ||
+		area(A, D, C) == area(M, A, D) + area(M, A, C) + area(M, D, C) ||
+		area(A, D, B) == area(M, A, D) + area(M, A, B) + area(M, D, B) ||
+		area(C, D, B) == area(M, C, D) + area(M, C, B) + area(M, D, B);
 }
 
