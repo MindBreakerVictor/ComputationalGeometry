@@ -90,9 +90,14 @@ namespace ComputationalGeometry
 		public:
 			Segment2D(const Point2D& X, const Point2D& Y);
 
+			const Point2D& GetA() const { return A; }
+			const Point2D& GetB() const { return B; }
+
 			const Array<double, 3>& GetCoef() const { return coefficients; }
 
 		private:
+			Point2D A;
+			Point2D B;
 			Array<double, 3> coefficients;
 	};
 
@@ -111,11 +116,15 @@ namespace ComputationalGeometry
 	// only if there is an unique solution, a call to GetRation returns true and parameter ratio isn't equal to -1).
 	bool CGAPI GetBarycentricCombination(const Point3D& X, const Point3D& Y, const Point3D& Z, Array<double, 3>& coefficients);
 
-	// Pass the address of a Point2D pointer, the pointer should be initialized with nullptr) in intersectionPoint argument.
-	// If the function return false the two segments passed in arguments seg1 & seg2 do not intersect.
-	// If the function return true and the pointer still points to null the two segments are equal.
-	// If the function return true and the two segments aren't equal then a new Point2D will be alocated containing the intersection point.
-	bool CGAPI GetIntersectionPoint(const Segment2D& seg1, const Segment2D& seg2, Point2D** intersectionPoint);
+	/*
+		Pass the address of a Point2D pointer(the pointer should be initialized with nullptr) in intersectionPoint parameter.
+		Pass the address of a Segment2D pointer(the pointer should be initialized with nullptr) in intersectionSegment parameter.
+		If the function returns false the two segments passed in arguments seg1 & seg2 do not intersect.
+		If the function returns true there are two possible cases: 
+			*intersectionPoint points to a valid Point2D which is the intersection point of the two segments.
+			*intersectionSegment points to a valid Segment2D which is the interval of points where the two segments intersect.
+	*/
+	bool CGAPI GetIntersection(const Segment2D& seg1, const Segment2D& seg2, Point2D** intersectionPoint, Segment2D** intersectionSegment);
 
 	// Check if the quadrilateral formed by the four points passed is convex.
 	bool CGAPI IsConvex(const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D);

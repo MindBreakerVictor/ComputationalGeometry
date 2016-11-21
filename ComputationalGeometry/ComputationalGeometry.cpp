@@ -64,7 +64,7 @@ Point3D& Point3D::operator/=(double scalar)
 	return *this;
 }
 
-Segment2D::Segment2D(const Point2D& X, const Point2D& Y)
+Segment2D::Segment2D(const Point2D& X, const Point2D& Y) : A(X), B(Y)
 {
 	coefficients[0] = X.GetY() - Y.GetY();
 	coefficients[1] = Y.GetX() - X.GetX();
@@ -204,19 +204,60 @@ bool ComputationalGeometry::GetBarycentricCombination(const Point3D& X, const Po
 	return true;
 }
 
-bool ComputationalGeometry::GetIntersectionPoint(const Segment2D& seg1, const Segment2D& seg2, Point2D** intersectionPoint)
+bool ComputationalGeometry::GetIntersection(const Segment2D& seg1, const Segment2D& seg2, Point2D** intersectionPoint, Segment2D** intersectionSegment)
 {
 	if (double delta = seg1.GetCoef()[0] * seg2.GetCoef()[1] - seg1.GetCoef()[1] * seg2.GetCoef()[0])
 	{
 		*intersectionPoint = new Point2D((-seg1.GetCoef()[2] * seg2.GetCoef()[1] + seg1.GetCoef()[1] * seg2.GetCoef()[2]) / delta, 
 			(-seg1.GetCoef()[0] * seg2.GetCoef()[2] + seg1.GetCoef()[2] * seg2.GetCoef()[0]) / delta);
 
-		return true;
+		Pair<double, double> interval = std::make_pair(min(seg1.GetA().GetY(), seg1.GetB().GetY()), max(seg1.GetA().GetY(), seg1.GetB().GetY()));
+
+		if (seg1.GetA().GetX() == seg1.GetA().GetX() && interval.first <= (*intersectionPoint)->GetY() && interval.second >= (*intersectionPoint)->GetY())
+		{
+			interval = std::make_pair(min(seg2.GetA().GetX(), seg2.GetB().GetX()), max(seg2.GetA().GetX(), seg2.GetB().GetX()));
+
+			if (interval.first <= (*intersectionPoint)->GetX() && interval.second >= (*intersectionPoint)->GetX())
+				return true;
+
+			delete *intersectionPoint;
+			return false;
+		}
+
+		interval = std::make_pair(min(seg1.GetA().GetX(), seg1.GetB().GetX()), max(seg1.GetA().GetX(), seg1.GetB().GetX()));
+
+		if (interval.first <= (*intersectionPoint)->GetX() && interval.second >= (*intersectionPoint)->GetX())
+		{
+			interval = std::make_pair(min(seg2.GetA().GetY(), seg2.GetB().GetY()), max(seg2.GetA().GetY(), seg2.GetB().GetY()));
+
+			if (seg1.GetA().GetY() == seg2.GetB().GetY() && interval.first <= (*intersectionPoint)->GetY() && interval.second >= (*intersectionPoint)->GetY())
+				return true;
+
+			interval = std::make_pair(min(seg2.GetA().GetX(), seg2.GetB().GetX()), max(seg2.GetA().GetX(), seg2.GetB().GetX()));
+
+			if (interval.first <= (*intersectionPoint)->GetX() && interval.second >= (*intersectionPoint)->GetY())
+				return true;
+
+			delete *intersectionPoint;
+			return false;
+		}
+
+		delete *intersectionPoint;
+		return false;
 	}
 	
 	if (seg1.GetCoef()[0] * seg2.GetCoef()[2] - seg1.GetCoef()[2] * seg2.GetCoef()[0] == 0 &&
 		seg1.GetCoef()[1] * seg2.GetCoef()[2] - seg1.GetCoef()[2] * seg2.GetCoef()[1] == 0)
+	{
+		if (seg1.GetA().GetX() < seg2.GetA().GetX() && seg1.GetA().GetX() < seg2.GetB().GetX() &&
+			seg1.GetB().GetX() < seg2.GetA().GetX() && seg1.GetB().GetX() < seg2.GetB().GetX())
+			return false;
+
+		Point2D left = seg1.GetA().GetX() < seg2.GetA().GetX() ? seg2.GetA() : seg1.GetA();
+		Point2D right = seg1.GetB().GetX() < seg2.GetB().GetX() ? seg1.GetB() : seg2.GetB();
+		*intersectionSegment = new Segment2D(left, right);
 		return true;
+	}
 
 	return false;
 }
