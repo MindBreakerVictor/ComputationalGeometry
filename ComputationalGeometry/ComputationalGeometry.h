@@ -123,6 +123,12 @@ namespace ComputationalGeometry
 	// Check if the point M belongs to the convex coverage of points A, B, C, D.
 	bool CGAPI BelongsToConvexCoverage(const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D, const Point2D& M);
 
+	// Check if the quadrilateral formed by the four points passed as arguments is district.
+	bool CGAPI IsDistrict(const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D);
+
+	// Returns the distance between two 2D points.
+	double CGAPI GetDistance(const Point2D& A, const Point2D& B);
+
 	/* Constants */
 	const Point2D Origin2D;
 	const Point3D Origin3D;

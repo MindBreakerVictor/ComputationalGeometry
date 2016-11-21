@@ -248,3 +248,13 @@ bool ComputationalGeometry::BelongsToConvexCoverage(const Point2D& A, const Poin
 		area(C, D, B) == area(M, C, D) + area(M, C, B) + area(M, D, B);
 }
 
+bool ComputationalGeometry::IsDistrict(const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D)
+{
+	return GetDistance(A, B) + GetDistance(C, D) == GetDistance(A, D) + GetDistance(B, C);
+}
+
+double ComputationalGeometry::GetDistance(const Point2D& A, const Point2D& B)
+{
+	return sqrt(pow(B.GetX() - A.GetX(), 2) + pow(B.GetY() - A.GetY(), 2));
+}
+
