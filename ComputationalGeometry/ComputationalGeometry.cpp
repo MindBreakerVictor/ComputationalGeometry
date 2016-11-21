@@ -214,12 +214,11 @@ bool ComputationalGeometry::GetIntersectionPoint(const Segment2D& seg1, const Se
 		return true;
 	}
 	
-	if (seg1.GetCoef()[0] * seg2.GetCoef()[1] - seg1.GetCoef()[1] * seg2.GetCoef()[0] == 0 &&
-			seg1.GetCoef()[0] * seg2.GetCoef()[2] - seg1.GetCoef()[2] * seg2.GetCoef()[0] == 0 &&
-			seg1.GetCoef()[1] * seg2.GetCoef()[2] - seg1.GetCoef()[2] * seg2.GetCoef()[1] == 0)
-			return true;
+	if (seg1.GetCoef()[0] * seg2.GetCoef()[2] - seg1.GetCoef()[2] * seg2.GetCoef()[0] == 0 &&
+		seg1.GetCoef()[1] * seg2.GetCoef()[2] - seg1.GetCoef()[2] * seg2.GetCoef()[1] == 0)
+		return true;
 
-	return true;
+	return false;
 }
 
 bool ComputationalGeometry::IsConvex(const Point2D& A, const Point2D& B, const Point2D& C, const Point2D& D)
