@@ -85,20 +85,28 @@ namespace ComputationalGeometry
 			double _z;
 	};
 
-	class CGAPI Segment2D
+	class CGAPI Line2D
 	{
 		public:
-			Segment2D(const Point2D& X, const Point2D& Y);
+			Line2D(const Point2D& X, const Point2D& Y);
+
+			const Array<double, 3>& GetCoef() const { return coefficients; }
+
+		protected:
+			Array<double, 3> coefficients;
+	};
+
+	class CGAPI Segment2D : public Line2D
+	{
+		public:
+			Segment2D(const Point2D& X, const Point2D& Y) : A(X), B(Y), Line2D(X, Y) { }
 
 			const Point2D& GetA() const { return A; }
 			const Point2D& GetB() const { return B; }
 
-			const Array<double, 3>& GetCoef() const { return coefficients; }
-
 		private:
 			Point2D A;
 			Point2D B;
-			Array<double, 3> coefficients;
 	};
 
 	bool CGAPI Collinear(const Point2D& X, const Point2D& Y, const Point2D& Z);

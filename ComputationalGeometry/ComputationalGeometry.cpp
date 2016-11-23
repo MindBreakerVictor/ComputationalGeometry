@@ -64,7 +64,7 @@ Point3D& Point3D::operator/=(double scalar)
 	return *this;
 }
 
-Segment2D::Segment2D(const Point2D& X, const Point2D& Y) : A(X), B(Y)
+Line2D::Line2D(const Point2D& X, const Point2D& Y)
 {
 	coefficients[0] = X.GetY() - Y.GetY();
 	coefficients[1] = Y.GetX() - X.GetX();
