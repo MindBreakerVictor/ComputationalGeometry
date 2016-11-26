@@ -109,6 +109,19 @@ namespace ComputationalGeometry
 			Point2D B;
 	};
 
+	class CGAPI Triangle2D
+	{
+		public:
+			Triangle2D(const Point2D& A, const Point2D& B, const Point2D& C): _A(A), _B(B), _C(C) { }
+
+			Array<Point2D, 3> GetPoints() const { return Array<Point2D, 3>({ _A, _B, _C }); }
+
+		private:
+			Point2D _A;
+			Point2D _B;
+			Point2D _C;
+	};
+
 	bool CGAPI Collinear(const Point2D& X, const Point2D& Y, const Point2D& Z);
 	bool CGAPI Collinear(const Point3D& X, const Point3D& Y, const Point3D& Z);
 
@@ -146,9 +159,26 @@ namespace ComputationalGeometry
 	// Returns the distance between two 2D points.
 	double CGAPI GetDistance(const Point2D& A, const Point2D& B);
 
+	/*
+		* TCCRP: triangle circumscribed circle relative position.
+	*/
+	enum Position
+	{
+		TCCRP_INSIDE,
+		TCCRP_OUTSIDE,
+		TCCRP_ONCIRCLE,
+		TCCRP_QLCONCAVE
+	};
+
+	// Get the position of 2D point relative to the circumscribed circle of a triangle.
+	// Atm the function works only if the points of the triangle and the fourth point form a convex quadrilateral.
+	Position CGAPI GetTCCRPosition(const Triangle2D& triangle, const Point2D& D);
+
 	/* Constants */
 	const Point2D Origin2D;
 	const Point3D Origin3D;
+
+	const double PI = 3.14159265358979323846;
 }
 
 #endif

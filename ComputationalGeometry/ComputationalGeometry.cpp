@@ -299,3 +299,32 @@ double ComputationalGeometry::GetDistance(const Point2D& A, const Point2D& B)
 	return sqrt(pow(B.GetX() - A.GetX(), 2) + pow(B.GetY() - A.GetY(), 2));
 }
 
+Position ComputationalGeometry::GetTCCRPosition(const Triangle2D& triangle, const Point2D& D)
+{
+	Array<Point2D, 3> trianglePoints = triangle.GetPoints();
+
+	/*if (!IsConvex(trianglePoints[0], trianglePoints[1], trianglePoints[2], D))
+		return TCCRP_QLCONCAVE;*/
+
+	Pair<double, double> a(trianglePoints[0].GetX() - trianglePoints[1].GetX(), trianglePoints[0].GetY() - trianglePoints[1].GetY());
+	Pair<double, double> b(trianglePoints[2].GetX() - trianglePoints[1].GetX(), trianglePoints[2].GetY() - trianglePoints[1].GetY());
+
+	double cosB = (a.first * b.first + a.second * b.second) /
+		(sqrt(pow(a.first, 2) + pow(a.second, 2)) * sqrt(pow(b.first, 2) + pow(b.second, 2)));
+
+	a = std::make_pair(trianglePoints[2].GetX() - D.GetX(), trianglePoints[2].GetY() - D.GetY());
+	b = std::make_pair(trianglePoints[0].GetX() - D.GetX(), trianglePoints[0].GetY() - D.GetY());
+
+	double cosD = (a.first * b.first + a.second * b.second) /
+		(sqrt(pow(a.first, 2) + pow(a.second, 2)) * sqrt(pow(b.first, 2) + pow(b.second, 2)));
+
+	double angleSum = (acos(cosB) * 180.0 / PI) + (acos(cosD) * 180.0 / PI);
+
+	if (angleSum == 180.0)
+		return TCCRP_ONCIRCLE;
+	else if (angleSum < 180.0)
+		return TCCRP_OUTSIDE;
+
+	return TCCRP_INSIDE;
+}
+
