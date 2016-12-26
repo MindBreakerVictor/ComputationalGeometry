@@ -88,6 +88,7 @@ namespace ComputationalGeometry
 	class CGAPI Line2D
 	{
 		public:
+			Line2D() { }
 			Line2D(const Point2D& X, const Point2D& Y);
 
 			const Array<double, 3>& GetCoef() const { return coefficients; }
@@ -99,6 +100,7 @@ namespace ComputationalGeometry
 	class CGAPI Segment2D : public Line2D
 	{
 		public:
+			Segment2D() { }
 			Segment2D(const Point2D& X, const Point2D& Y) : A(X), B(Y), Line2D(X, Y) { }
 
 			const Point2D& GetA() const { return A; }
@@ -174,10 +176,30 @@ namespace ComputationalGeometry
 	// Atm the function works only if the points of the triangle and the fourth point form a convex quadrilateral.
 	Position CGAPI GetTCCRPosition(const Triangle2D& triangle, const Point2D& D);
 
+	enum Orientation
+	{
+		ORIENTATION_COLLINEAR,
+		ORIENTATION_CLOCKWISE,
+		ORIENTATION_COUNTERCLOCKWISE
+	};
+
+	// Return the orientation of an ordered triplet of 2D points.
+	Orientation CGAPI GetOrientation(const Point2D& A, const Point2D& B, const Point2D& C);
+
+	// convexHullPoints parameter should be a std::vector containing at least three 2D points.
+	// Returns a std::vector containing the points that forms the convex hull border.
+	// It uses gift wrapping algorithm aka Jarvis march.
+	Vector<Point2D> CGAPI GetConvexHullBorder(const Vector<Point2D>& convexHullPoints);
+
 	/* Constants */
+
+	// 2D origin point (0, 0)
 	const Point2D Origin2D;
+
+	// 3D origin point (0, 0, 0)
 	const Point3D Origin3D;
 
+	// Mathematical constant "pi"
 	const double PI = 3.14159265358979323846;
 }
 

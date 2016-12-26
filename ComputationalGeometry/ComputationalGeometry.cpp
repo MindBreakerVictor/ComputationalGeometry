@@ -303,9 +303,6 @@ Position ComputationalGeometry::GetTCCRPosition(const Triangle2D& triangle, cons
 {
 	Array<Point2D, 3> trianglePoints = triangle.GetPoints();
 
-	/*if (!IsConvex(trianglePoints[0], trianglePoints[1], trianglePoints[2], D))
-		return TCCRP_QLCONCAVE;*/
-
 	Pair<double, double> a(trianglePoints[0].GetX() - trianglePoints[1].GetX(), trianglePoints[0].GetY() - trianglePoints[1].GetY());
 	Pair<double, double> b(trianglePoints[2].GetX() - trianglePoints[1].GetX(), trianglePoints[2].GetY() - trianglePoints[1].GetY());
 
@@ -326,5 +323,51 @@ Position ComputationalGeometry::GetTCCRPosition(const Triangle2D& triangle, cons
 		return TCCRP_OUTSIDE;
 
 	return TCCRP_INSIDE;
+}
+
+Orientation ComputationalGeometry::GetOrientation(const Point2D& A, const Point2D& B, const Point2D& C)
+{
+	double value = (B.GetY() - A.GetY()) * (C.GetX() - B.GetX()) - (B.GetX() - A.GetX()) * (C.GetY() - B.GetY());
+
+	if (!value)
+		return ORIENTATION_COLLINEAR;
+
+	return value > 0.0 ? ORIENTATION_CLOCKWISE : ORIENTATION_COUNTERCLOCKWISE;
+}
+
+Vector<Point2D> ComputationalGeometry::GetConvexHullBorder(const Vector<Point2D>& convexHullPoints)
+{
+	if (convexHullPoints.size() < 3)
+		return convexHullPoints;
+
+	size_t bottomLeftPointIndex = 0;
+
+	// Get the bottom left point.
+	for (size_t i = 1; i < convexHullPoints.size(); ++i)
+		if (convexHullPoints[bottomLeftPointIndex].GetX() == convexHullPoints[i].GetX() &&
+			convexHullPoints[bottomLeftPointIndex].GetY() > convexHullPoints[i].GetY() ||
+			convexHullPoints[bottomLeftPointIndex].GetX() > convexHullPoints[i].GetX())
+				bottomLeftPointIndex = i;
+
+	Vector<Point2D> convexHullBorder;
+
+	// Start from the bottom left point, moving counterclockwise until we reach the start point.
+	int currentPointIndex = bottomLeftPointIndex;
+
+	do 
+	{
+		convexHullBorder.push_back(convexHullPoints[currentPointIndex]);
+
+		int mostCounterclockwisePointIndex = (currentPointIndex + 1) % convexHullPoints.size();
+		
+		for (size_t i = 0; i < convexHullPoints.size(); ++i)
+			if (GetOrientation(convexHullPoints[currentPointIndex], convexHullPoints[i],
+				convexHullPoints[mostCounterclockwisePointIndex]) == ORIENTATION_COUNTERCLOCKWISE)
+				mostCounterclockwisePointIndex = i;
+
+		currentPointIndex = mostCounterclockwisePointIndex;
+	} while (currentPointIndex != bottomLeftPointIndex);
+
+	return convexHullBorder;
 }
 
